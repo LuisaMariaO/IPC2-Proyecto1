@@ -1,5 +1,6 @@
 
 from ListaSimpleEnlazada import ListaSimple
+from ListaSalida import ListaSalida
 import xml.etree.ElementTree as ET
 
 
@@ -42,7 +43,7 @@ def carga(ruta, terrenos):
     except:
         print("Ha ocurrido un error")
 
-def proceso(terrenos):  
+def proceso(terrenos, terrenosalida):  
     print("-------------Proceso de terrenos-------------")
     print("Terrenos disponibles en el sistema:")
     terrenos.imprimirTerreno()
@@ -53,11 +54,13 @@ def proceso(terrenos):
     else:
         #terreno.lista_posiciones.imprimir()
         print("Procesando: ",terreno.nombre)
-        print("Obteniendo dimensiones del terreno: (",terreno.dimensionx,",",terreno.dimensiony,")")
+        print("Obteniendo dimensiones del terreno: ",terreno.dimensionx,"x",terreno.dimensiony)
         print("Obteniendo coordenada inicial: (",terreno.iniciox,",",terreno.inicioy,")")
         xinicial=terreno.iniciox
         yinicial=terreno.inicioy
         print("Obteniendo coordenada final: (",terreno.finx,",",terreno.finy,")")
+        xfinal=terreno.finx
+        yfinal=terreno.finy
         print("Obteniendo la distancia...")
         distanciax=abs(int(terreno.finx)-int(terreno.iniciox))
         distanciay=abs(int(terreno.finy)-int(terreno.inicioy))
@@ -72,8 +75,66 @@ def proceso(terrenos):
             direcciony="abajo"
         else:
             direcciony="arriba"
-        inicio=terreno.lista_posiciones.getInicio(xinicial,yinicial)
-        print(inicio.combustible)
+
+        #Tomando posición inical
+        coordenadaactual=terreno.lista_posiciones.getInicio(xinicial,yinicial)
+        
+        #Agregando el terreno a la lista de salida
+        terrenosalida.crearTerreno(terreno.nombre, terreno.dimensionx, terreno.dimensiony, terreno.iniciox, terreno.inicioy, terreno.finx, terreno.finy)
+        #Agregando la posición inical a la lista de salida
+        mapafinal= terrenosalida.getTerreno(terreno.nombre)
+        mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+        combustible=0
+        if direccionx=="derecha" and direcciony=="abajo":
+            while coordenadaactual!=None:
+                #Busco el adyacente en x
+                xsiguiente=int(coordenadaactual.x)+1
+                ysiguiente=int(coordenadaactual.y)+1
+                xcoordenadasiguiente=(terreno.lista_posiciones.searchCoordenada(str(xsiguiente),coordenadaactual.y))
+               
+                ycoordenadasiguiente=(terreno.lista_posiciones.searchCoordenada(coordenadaactual.x,str(ysiguiente)))
+                if(xcoordenadasiguiente==None and ycoordenadasiguiente==None):
+                    break
+
+                if ycoordenadasiguiente==None:
+                    coordenadaactual=xcoordenadasiguiente
+                    print("Derecha")
+                    combustible+=int(xcoordenadasiguiente.combustible)
+                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+                    continue
+
+                if xcoordenadasiguiente==None:
+                    coordenadaactual=ycoordenadasiguiente
+                    print("Abajo")
+                    combustible+=int(ycoordenadasiguiente.combustible)
+                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+                    continue
+                
+                if(xcoordenadasiguiente.combustible<=ycoordenadasiguiente.combustible):
+                    #print(xcoordenadasiguiente.x," ",xcoordenadasiguiente.y)
+                    coordenadaactual=xcoordenadasiguiente
+                    combustible+=int(xcoordenadasiguiente.combustible)
+                    print("Derecha")
+                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+                else:
+                    
+                    coordenadaactual=ycoordenadasiguiente
+                    combustible+=int(ycoordenadasiguiente.combustible)
+                    print("Abajo")
+                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+
+                if(coordenadaactual==None):
+                    break
+            print("Combustible: ", combustible)
+            mapafinal.lista_posiciones.imprimir()
+                
+                
+
+        
+        
+        
+        
+        
         
 def grafica(terrenos):
     print("-------------Graficadora-------------")
@@ -87,6 +148,7 @@ def grafica(terrenos):
 def menu():
     #lista_nodos=ListaDoble()
     lista_terrenos=ListaSimple()
+    lista_salida=ListaSalida()
     while True:
         print("\nAgencia Guatemalteca de Investigación Espacial")
         print("Monitoreo de r2r2 \n")
@@ -103,7 +165,7 @@ def menu():
             carga(filename, lista_terrenos)
         elif option=="2":
             print("Procesando archivo...\n")
-            proceso(lista_terrenos)
+            proceso(lista_terrenos, lista_salida)
             
         elif option=="3":
             ("Escribe")

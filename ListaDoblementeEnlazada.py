@@ -31,3 +31,11 @@ class ListaDoble():
                 return tmp
             tmp = tmp.siguiente
         return None
+
+    def searchCoordenada(self,x,y):
+        tmp = self.primero
+        while tmp is not None:
+            if tmp.x==x and tmp.y==y:
+                return tmp
+            tmp= tmp.siguiente
+        return None
