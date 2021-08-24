@@ -24,7 +24,7 @@ class ListaPosicionesSalida:
             print("x= "+str(aux.x)+" y= "+str(aux.y)+" Combustible= "+str(aux.combustible))
             aux = aux.siguiente
     
-    def getInicio(self,x,y):
+    def getCoordenada(self,x,y):
         tmp = self.primero
         while tmp is not None:
             if tmp.x==x and tmp.y==y:
