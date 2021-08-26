@@ -66,132 +66,107 @@ def proceso(terrenos, terrenosalida):
         distanciax=abs(int(terreno.finx)-int(terreno.iniciox))
         distanciay=abs(int(terreno.finy)-int(terreno.inicioy))
         
-        print("Obteniendo la dirección del movimiento...")
-        if terreno.iniciox<=terreno.finx:
-            direccionx="derecha"
-        else:
-            direccionx="izquierda"
         
-        if terreno.inicioy<=terreno.finy:
-            direcciony="abajo"
-        else:
-            direcciony="arriba"
-
         #Tomando posición inical
-        coordenadaactual=terreno.lista_posiciones.getInicio(xinicial,yinicial)
+        actual=terreno.lista_posiciones.getInicio(xinicial,yinicial)
         
+        actual.etiqueta.acumulado=actual.combustible
+        actual.etiqueta.anterior=None
+        actual.etiqueta.iteraciones=0
+        actual.etiqueta.terminal=True
+
+        #Tomo el nodo final
+        final=terreno.lista_posiciones.searchCoordenada(xfinal,yfinal)
+
         #Agregando el terreno a la lista de salida
         terrenosalida.crearTerreno(terreno.nombre, terreno.dimensionx, terreno.dimensiony, terreno.iniciox, terreno.inicioy, terreno.finx, terreno.finy)
         #Agregando la posición inical a la lista de salida
         mapafinal= terrenosalida.getTerreno(terreno.nombre)
-        mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
+        mapafinal.lista_posiciones.agregar(actual.x, actual.y, actual.combustible)
         combustible=0
-        xsiguiente=0
-        ysiguiente=0
-        combustible+=int(coordenadaactual.combustible)
-        if direccionx=="derecha" and direcciony=="abajo":
-            while coordenadaactual!=None:
-                if coordenadaactual.x==xfinal and coordenadaactual.y==yfinal:
-                    break
-                    
-                #Busco el adyacente en x
-                xsiguiente=int(coordenadaactual.x)+1
-                ysiguiente=int(coordenadaactual.y)+1
-                xcoordenadasiguiente=(terreno.lista_posiciones.searchCoordenada(str(xsiguiente),coordenadaactual.y))
-               
-                ycoordenadasiguiente=(terreno.lista_posiciones.searchCoordenada(coordenadaactual.x,str(ysiguiente)))
-                if(xcoordenadasiguiente==None and ycoordenadasiguiente==None):
-                    break
-                
-                if distanciax==0:
-                    coordenadaactual=ycoordenadasiguiente
-                    distanciay-=1
-                    #print("Derecha")
-                    combustible+=int(ycoordenadasiguiente.combustible)
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                    continue
-                
-                if distanciay==0:
-                    coordenadaactual=xcoordenadasiguiente
-                    distanciax-=1
-                    #print("Abajo")
-                    combustible+=int(xcoordenadasiguiente.combustible)
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                    continue
-                
-                if ycoordenadasiguiente==None and xcoordenadasiguiente==None:
-                    coordenadaactual=xcoordenadasiguiente
-                    distanciax-=1
-                    #print("Abajo")
-                    combustible+=int(xcoordenadasiguiente.combustible)
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                    continue
+        iteraciones=0
+        while not final.etiqueta.terminal:
+            iteraciones+=1
+            #Obteniendo los nodos adyacentes
+            arriba=terreno.lista_posiciones.searchCoordenada(str(int(actual.x)-1),actual.y)
+            abajo=terreno.lista_posiciones.searchCoordenada(str(int(actual.x)+1),actual.y)
+            derecha=terreno.lista_posiciones.searchCoordenada(actual.x,str(int(actual.y)+1))
+            izquierda=terreno.lista_posiciones.searchCoordenada(actual.x,str(int(actual.y)-1))
 
-                if xcoordenadasiguiente==None and ycoordenadasiguiente==None:
-                    coordenadaactual=ycoordenadasiguiente
-                    distanciay-=1
-                    #print("Derecha")
-                    combustible+=int(ycoordenadasiguiente.combustible)
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                    continue
-                
-                if(xcoordenadasiguiente.combustible<=ycoordenadasiguiente.combustible):
-                    #print(xcoordenadasiguiente.x," ",xcoordenadasiguiente.y)
-                    coordenadaactual=xcoordenadasiguiente
-                    combustible+=int(xcoordenadasiguiente.combustible)
-                    distanciax-=1
-                    #print("Abajo")
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                else:
-                    
-                    coordenadaactual=ycoordenadasiguiente
-                    combustible+=int(ycoordenadasiguiente.combustible)
-                    distanciay-=1
-                    #print("Derecha")
-                    mapafinal.lista_posiciones.agregar(coordenadaactual.x, coordenadaactual.y, coordenadaactual.combustible)
-                
-                if(coordenadaactual==None):
-                    break
-                if(distanciax==0 and distanciay==0):
-                    break
-                
-            
-            
-            
-            actual=mapafinal.lista_posiciones.getCoordenada("1","1")
-
-            filas= int(terreno.dimensionx)
-            columnas= int(terreno.dimensiony)
-            
-            filaactual=1
-            columnaactual=1
-            
-            while columnaactual<=columnas and filaactual<=filas :
-                
-
-                if actual!=None:
-                    if columnaactual==columnas:
-                        columnaactual=1
-                        filaactual+=1
-                        print("|1|",end="")
-                        print("")
-                    else:
-                        print("|1|",end="")
-                        columnaactual+=1
-                    
+            #Etiquetando
+            if arriba!=None and not arriba.etiqueta.terminal:
+                tmp_arriba_acumulado=0
+                acumulado=0
+                if arriba.etiqueta.acumulado==0:
+                    acumulado=int(actual.etiqueta.acumulado)+int(arriba.combustible) 
+                    terreno.lista_posiciones.setEtiqueta(arriba.x, arriba.y, acumulado, actual, iteraciones)
+                   
                     
                 else:
-                    if columnaactual==columnas:
-                        columnaactual=1
-                        filaactual+=1
-                        print("|0|",end="")
-                        print("")
+                    tmp_arriba_acumulado=int(actual.etiqueta.acumulado)+int(arriba.combustible) 
+
+                    if int(tmp_arriba_acumulado)<int(arriba.etiqueta.acumulado):
+                        terreno.lista_posiciones.setEtiqueta(str(arriba.x), str(arriba.y), tmp_arriba_acumulado, actual, iteraciones)
+
+
                     
-                    else:
-                        print("|0|",end="")
-                        columnaactual+=1
-                actual=mapafinal.lista_posiciones.getCoordenada(str(filaactual),str(columnaactual))
-            print("Consumo de combustible aproximado: ", combustible)
+            if abajo!=None and not abajo.etiqueta.terminal:
+                acumulado=0
+                tmp_abajo_acumulado=0
+                if abajo.etiqueta.acumulado==0:
+                    acumulado=int(actual.etiqueta.acumulado)+int(abajo.combustible)
+                    terreno.lista_posiciones.setEtiqueta(str(abajo.x), str(abajo.y), acumulado, actual, iteraciones)
+                else:
+                    tmp_abajo_acumulado=int(actual.etiqueta.acumulado)+int(abajo.combustible) 
+                
+                    if int(tmp_abajo_acumulado)<int(abajo.etiqueta.acumulado) and tmp_abajo_acumulado!=0:
+                        terreno.lista_posiciones.setEtiqueta(str(abajo.x), str(abajo.y), tmp_abajo_acumulado, actual, iteraciones)
+
+           
+            if derecha!=None and not derecha.etiqueta.terminal :
+                acumulado=0
+                tmp_derecha_acumulado=0
+                if derecha.etiqueta.acumulado==0:
+                    acumulado=int(actual.etiqueta.acumulado)+int(derecha.combustible) 
+                    terreno.lista_posiciones.setEtiqueta(str(derecha.x), str(derecha.y), acumulado, actual, iteraciones)
+                else:                    
+                    tmp_derecha_acumulado=int(actual.etiqueta.acumulado)+int(derecha.combustible)
+
+                    if int(tmp_derecha_acumulado)<int(derecha.etiqueta.acumulado) and tmp_derecha_acumulado!=0:
+                        terreno.lista_posiciones.setEtiqueta(str(derecha.x), str(derecha.y), tmp_derecha_acumulado, actual, iteraciones)
+
+            if izquierda!=None and not izquierda.etiqueta.terminal :
+                acumulado=0
+                tmp_izquierda_acumulado=0
+                if izquierda.etiqueta.acumulado==0:
+                    acumulado=int(actual.etiqueta.acumulado)+int(izquierda.combustible) 
+                    terreno.lista_posiciones.setEtiqueta(str(izquierda.x), str(izquierda.y), acumulado, actual, iteraciones)
+                else:                    
+                    tmp_izquierda_acumulado=int(actual.etiqueta.acumulado)+int(izquierda.combustible)
+
+                    if int(tmp_izquierda_acumulado)<int(izquierda.etiqueta.acumulado) and tmp_izquierda_acumulado!=0:
+                        terreno.lista_posiciones.setEtiqueta(str(izquierda.x), str(izquierda.y), tmp_izquierda_acumulado, actual, iteraciones)
+            menor=terreno.lista_posiciones.retornarMenor(actual)
+           
+            actual=menor
+            #actual=terreno.lista_posiciones.setTerminal(actual.x, actual.y)
+            
+            if(actual.x==final.x and actual.y==final.y and actual.etiqueta.terminal):
+                combustible=actual.etiqueta.acumulado
+                break
+            
+            combustible=actual.etiqueta.acumulado
+            
+            
+        final=terreno.lista_posiciones.searchCoordenada(xfinal,yfinal)  
+        print(final.x," ", final.y)  
+        
+        nodocamino=final
+        while nodocamino is not None:
+             print(nodocamino.x," ", nodocamino.y)
+             nodocamino=nodocamino.etiqueta.anterior 
+
+        print("Consumo de combustible aproximado: ", combustible)
                     
                     
                     

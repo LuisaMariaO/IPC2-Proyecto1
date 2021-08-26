@@ -1,3 +1,4 @@
+from Etiqueta import Etiqueta
 class Nodo():
     def __init__(self,x,y,combustible):
         self.x = x
@@ -5,4 +6,6 @@ class Nodo():
         self.combustible = combustible
         self.siguiente = None
         self.anterior = None
+        self.etiqueta=Etiqueta(0,None,0,False)
+
         
