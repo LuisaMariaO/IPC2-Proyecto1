@@ -1,3 +1,4 @@
+
 from nodo import Nodo
 from Etiqueta import Etiqueta
 class ListaDoble():
@@ -19,7 +20,7 @@ class ListaDoble():
             
         self.size+=1
         
-
+    
     def imprimir(self):
         aux = self.primero
         while aux:

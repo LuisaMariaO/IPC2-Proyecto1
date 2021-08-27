@@ -82,7 +82,7 @@ def proceso(terrenos, terrenosalida):
         terrenosalida.crearTerreno(terreno.nombre, terreno.dimensionx, terreno.dimensiony, terreno.iniciox, terreno.inicioy, terreno.finx, terreno.finy)
         #Agregando la posición inical a la lista de salida
         mapafinal= terrenosalida.getTerreno(terreno.nombre)
-        mapafinal.lista_posiciones.agregar(actual.x, actual.y, actual.combustible)
+        
         combustible=0
         iteraciones=0
         while not final.etiqueta.terminal:
@@ -100,7 +100,6 @@ def proceso(terrenos, terrenosalida):
                 if arriba.etiqueta.acumulado==0:
                     acumulado=int(actual.etiqueta.acumulado)+int(arriba.combustible) 
                     terreno.lista_posiciones.setEtiqueta(arriba.x, arriba.y, acumulado, actual, iteraciones)
-                   
                     
                 else:
                     tmp_arriba_acumulado=int(actual.etiqueta.acumulado)+int(arriba.combustible) 
@@ -159,17 +158,54 @@ def proceso(terrenos, terrenosalida):
             
             
         final=terreno.lista_posiciones.searchCoordenada(xfinal,yfinal)  
-        print(final.x," ", final.y)  
+        
         
         nodocamino=final
         while nodocamino is not None:
-             print(nodocamino.x," ", nodocamino.y)
-             nodocamino=nodocamino.etiqueta.anterior 
+            mapafinal.lista_posiciones.agregarFinal(nodocamino.x, nodocamino.y, nodocamino.combustible)
+            nodocamino=nodocamino.etiqueta.anterior 
 
+        filas= int(terreno.dimensionx)
+        columnas= int(terreno.dimensiony)
+
+        columnaactual=1
+        filaactual=1
+        actual=mapafinal.lista_posiciones.getCoordenada(str(filaactual),str(columnaactual))
+        while columnaactual<=columnas and filaactual<=filas :
+                if actual!=None:
+                    if columnaactual==columnas:
+                        columnaactual=1
+                        filaactual+=1
+                        print("|1|",end="")
+                        print("")
+                    else:
+                        print("|1",end="")
+                        columnaactual+=1
+                    
+                    
+                else:
+                    if columnaactual==columnas:
+                        columnaactual=1
+                        filaactual+=1
+                        print("|0|",end="")
+                        print("")
+                    
+                    else:
+                        print("|0",end="")
+                        columnaactual+=1
+                actual=mapafinal.lista_posiciones.getCoordenada(str(filaactual),str(columnaactual))
         print("Consumo de combustible aproximado: ", combustible)
+       
                     
                     
-                    
+def salida(terrenosalida):
+    print("-------------Generador de archivos de salida-------------")
+    print("Terrenos procesados en el sistema:")
+    terrenosalida.imprimirTerreno()
+    ruta=input("Escribir una ruta específica: ")
+    terrenosalida.Archivo(ruta)
+    
+                  
                     
                     
                 
@@ -183,6 +219,7 @@ def proceso(terrenos, terrenosalida):
         
 def grafica(terrenos):
     print("-------------Graficadora-------------")
+    
     busqueda=input("Ingrese el nombre del mapa a graficar: ")
     terreno=terrenos.getTerreno(busqueda)
     if terreno is None:
@@ -208,12 +245,13 @@ def menu():
         if option=="1":
             filename=input("Ingrese la ruta del archivo: ")
             carga(filename, lista_terrenos)
+            
         elif option=="2":
             print("Procesando archivo...\n")
             proceso(lista_terrenos, lista_salida)
             
         elif option=="3":
-            ("Escribe")
+            salida(lista_salida)
         elif option=="4":
             print("\n->Luisa María Ortíz Romero")
             print("->202003381")

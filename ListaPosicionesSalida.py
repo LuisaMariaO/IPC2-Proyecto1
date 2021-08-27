@@ -16,7 +16,17 @@ class ListaPosicionesSalida:
             self.ultimo.anterior = aux
             
         self.size+=1
-        
+
+    def agregarFinal(self, x, y, combustible):
+        if self.vacia():
+            self.ultimo=self.primero=NodoSalida(x,y,combustible)
+        else:
+            aux=self.primero
+            self.primero=aux.anterior=NodoSalida(x,y,combustible)
+            self.primero.siguiente=aux
+        self.size+=1
+
+
 
     def imprimir(self):
         aux = self.primero
@@ -31,3 +41,11 @@ class ListaPosicionesSalida:
                 return tmp
             tmp = tmp.siguiente
         return None
+
+    def Escribir(self):
+        body=''
+        aux = self.primero
+        while aux:
+            body+='\t\t<posicion x="'+aux.x+'" y="'+aux.y+'">'+aux.combustible+'</posicion>\n'
+            aux = aux.siguiente
+        return body

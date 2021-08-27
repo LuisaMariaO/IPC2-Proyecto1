@@ -30,3 +30,31 @@ class ListaSalida():
                 return tmp
             tmp = tmp.siguiente
         return None
+
+    def Archivo(self,ruta):
+        archivo=open(ruta,'w')
+        aux = self.primero
+        body=''
+        body+='<terrenos>\n'
+        while aux is not None:
+            body+='\t<terreno nombre="'+aux.nombre+'">\n'
+            body+='\t\t<dimension>\n'
+            body+='\t\t\t<m>'+aux.dimensionx+'</m>\n'
+            body+='\t\t\t<n>'+aux.dimensiony+'</n>\n'
+            body+='\t\t</dimension>\n'
+            body+='\t\t<posicioninicio>\n'
+            body+='\t\t\t<x>'+aux.iniciox+'</x>\n'
+            body+='\t\t\t<y>'+aux.inicioy+'</y>\n'
+            body+='\t\t</posicioninicio>\n'
+            body+='\t\t<posicionfin>\n'
+            body+='\t\t\t<x>'+aux.finx+'</x>\n'
+            body+='\t\t\t<y>'+aux.finy+'</y>\n'
+            body+='\t\t</posicionfin>\n'
+            body+=aux.lista_posiciones.Escribir()
+            body+='\t</terreno>\n'
+            aux = aux.siguiente
+        body+='</terrenos>'
+        archivo.write(body)
+        print("¡Archivo generado con éxito!")
+        
+        
