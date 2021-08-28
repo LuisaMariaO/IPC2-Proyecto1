@@ -227,41 +227,15 @@ def grafica(terrenos):
     else:
         graphviz="""
         digraph L{
-    node[shape=box fillcolor=cadetblue3 style =filled]
+    node[shape=circle fillcolor=cadetblue3 style =filled]
     
     subgraph cluster_p{\n"""
         graphviz+='\t\tlabel="'+terreno.nombre+'"\n'
         graphviz+="""\t\tbgcolor = brown3
-        raiz[label = "0,0"]
         edge[dir = "none"]\n"""
         
-        for m in range(1, int(terreno.dimensionx)+1):
-            graphviz+='\t\tFila'+str(m)+'[label="'+str(m)+'",group=1];\n'   
-       
-        for m in range(1, int(terreno.dimensionx)):
-            graphviz+='\t\tFila'+str(m)+'->'+'Fila'+str(int(m+1))+';\n'
-   
-
-        for n in range(1,int(terreno.dimensiony)+1):
-            graphviz+='\t\tColumna'+str(n)+'[label="'+str(n)+'",group='+str(int(n)+1)+',fillcolor=cadetblue3];\n'
-           
-        for n in range(1, int(terreno.dimensiony)):
-            graphviz+='\t\tColumna'+str(n)+'->'+'Columna'+str(int(n+1))+';\n'
-        graphviz+="""
-        raiz->Fila1;
-        raiz->Columna1;
-        {rank=same;raiz
-        """
-        for n in range(1, int(terreno.dimensiony)+1):
-            graphviz+=';Columna'+str(n)
-        graphviz+=';}\n'
-        
-        graphviz+="""
-        }
-
-}
-        
-    """
+    graphviz+=terreno.lista_posiciones.graficar(terreno.dimensionx, terreno.dimensiony)   
+    graphviz+="}\n}"
     graph= open('mapa'+terreno.nombre+'.dot','w')
     graph.write(graphviz)
     graph.close()

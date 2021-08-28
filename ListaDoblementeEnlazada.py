@@ -28,6 +28,32 @@ class ListaDoble():
             aux = aux.siguiente
 
 
+    def graficar(self,m,n):
+        aux = self.primero
+        graphviz=''
+        for i in range (1,int(m)+1):
+            for j in range(1,int(n)+1):
+                graphviz+='\t\tnodo'+str(i)+"_"+str(j)+'[label="'+aux.combustible+'",fillcolor=azure,group='+str(j)+']\n'
+                aux=aux.siguiente
+        
+        for i in range (1,int(m)+1):
+            graphviz+='\t\t{rank=same; nodo'+str(i)+"_1"
+            for j in range(1,int(n)):
+                graphviz+='->nodo'+str(i)+"_"+str(j+1)
+            graphviz+='}\n'
+       
+        for j in range (1,int(n)+1):
+            graphviz+='\t\tnodo'+'1_'+str(j)
+            for i in range(1,int(m)):
+                graphviz+='->nodo'+str(i+1)+"_"+str(j)
+            graphviz+='\n'
+        
+        
+        return graphviz
+        
+        
+
+
     def setEtiqueta(self, x,y,acumulado, anterior, iteraciones):
         tmp = self.primero
         while tmp is not None:
