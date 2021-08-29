@@ -30,3 +30,11 @@ class ListaSimple():
                 return tmp
             tmp = tmp.siguiente
         return None
+    def setProcesado(self,nombre):
+        tmp = self.primero
+        while tmp is not None:
+            if tmp.nombre == nombre:
+                tmp.procesado=True
+                return tmp
+            tmp = tmp.siguiente
+        return None

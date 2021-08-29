@@ -8,5 +8,6 @@ class Terreno:
         self.inicioy = inicioy
         self.finx = finx
         self.finy = finy
+        self.procesado=False
         self.lista_posiciones = ListaDoble()
         self.siguiente = None
