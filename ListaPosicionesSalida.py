@@ -46,6 +46,8 @@ class ListaPosicionesSalida:
         body=''
         aux = self.primero
         while aux:
-            body+='\t\t<posicion x="'+aux.x+'" y="'+aux.y+'">'+aux.combustible+'</posicion>\n'
+            body+='\t\t<posicion x="'+aux.x+'" y="'+aux.y+'">'+str(aux.combustible)+'</posicion>\n'
             aux = aux.siguiente
         return body
+    
+    

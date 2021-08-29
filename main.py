@@ -79,7 +79,7 @@ def proceso(terrenos, terrenosalida):
         final=terreno.lista_posiciones.searchCoordenada(xfinal,yfinal)
 
         #Agregando el terreno a la lista de salida
-        terrenosalida.crearTerreno(terreno.nombre, terreno.dimensionx, terreno.dimensiony, terreno.iniciox, terreno.inicioy, terreno.finx, terreno.finy)
+        terrenosalida.crearTerreno(terreno.nombre, terreno.dimensionx, terreno.dimensiony, terreno.iniciox, terreno.inicioy, terreno.finx, terreno.finy,0)
         #Agregando la posición inical a la lista de salida
         mapafinal= terrenosalida.getTerreno(terreno.nombre)
         
@@ -146,7 +146,7 @@ def proceso(terrenos, terrenosalida):
                     if int(tmp_izquierda_acumulado)<int(izquierda.etiqueta.acumulado) and tmp_izquierda_acumulado!=0:
                         terreno.lista_posiciones.setEtiqueta(str(izquierda.x), str(izquierda.y), tmp_izquierda_acumulado, actual, iteraciones)
             menor=terreno.lista_posiciones.retornarMenor(actual)
-           
+
             actual=menor
             #actual=terreno.lista_posiciones.setTerminal(actual.x, actual.y)
             
@@ -156,7 +156,7 @@ def proceso(terrenos, terrenosalida):
             
             combustible=actual.etiqueta.acumulado
             
-            
+        mapafinal= terrenosalida.setCombustible(terreno.nombre,combustible)    
         final=terreno.lista_posiciones.searchCoordenada(xfinal,yfinal)  
         
         
@@ -199,11 +199,14 @@ def proceso(terrenos, terrenosalida):
                     
                     
 def salida(terrenosalida):
-    print("-------------Generador de archivos de salida-------------")
-    print("Terrenos procesados en el sistema:")
-    terrenosalida.imprimirTerreno()
-    ruta=input("Escribir una ruta específica: ")
-    terrenosalida.Archivo(ruta)
+    try:
+        print("-------------Generador de archivos de salida-------------")
+        print("Terrenos procesados en el sistema:")
+        terrenosalida.imprimirTerreno()
+        ruta=input("Escribir una ruta específica: ")
+        terrenosalida.Archivo(ruta)
+    except:
+        print("Ha ocurrido un error, intente nuevamente\n")
     
                   
                     
@@ -218,31 +221,34 @@ def salida(terrenosalida):
         
         
 def grafica(terrenos):
-    print("-------------Graficadora-------------")
-    
-    busqueda=input("Ingrese el nombre del mapa a graficar: ")
-    terreno=terrenos.getTerreno(busqueda)
-    if terreno is None:
-        print("Terreno no encontrado")
-    else:
-        graphviz="""
-        digraph L{
-    node[shape=circle fillcolor=cadetblue3 style =filled]
-    
-    subgraph cluster_p{\n"""
-        graphviz+='\t\tlabel="'+terreno.nombre+'"\n'
-        graphviz+="""\t\tbgcolor = brown3
-        edge[dir = "none"]\n"""
+    try:
+        print("-------------Graficadora-------------")
         
-    graphviz+=terreno.lista_posiciones.graficar(terreno.dimensionx, terreno.dimensiony)   
-    graphviz+="}\n}"
-    graph= open('mapa'+terreno.nombre+'.dot','w')
-    graph.write(graphviz)
-    graph.close()
-    
-    system('dot -Tpng mapa'+terreno.nombre+'.dot -o Mapa_'+terreno.nombre+'.png')
-    system('Mapa_'+terreno.nombre+'.png')
-    print("¡Gráfica generada con éxito")
+        busqueda=input("Ingrese el nombre del mapa a graficar: ")
+        terreno=terrenos.getTerreno(busqueda)
+        if terreno is None:
+            print("Terreno no encontrado")
+        else:
+            graphviz="""
+        digraph L{
+        node[shape=circle fillcolor=cadetblue3 style =filled]
+        
+        subgraph cluster_p{\n"""
+            graphviz+='\t\tlabel="'+terreno.nombre+'"\n'
+            graphviz+="""\t\tbgcolor = brown3
+            edge[dir = "none"]\n"""
+            
+        graphviz+=terreno.lista_posiciones.graficar(terreno.dimensionx, terreno.dimensiony)   
+        graphviz+="}\n}"
+        graph= open('mapa'+terreno.nombre+'.dot','w')
+        graph.write(graphviz)
+        graph.close()
+        
+        system('dot -Tpng mapa'+terreno.nombre+'.dot -o Mapa_'+terreno.nombre+'.png')
+        system('Mapa_'+terreno.nombre+'.png')
+        print("¡Gráfica generada con éxito")
+    except:
+        print("Ha ocurrido un error, intente nuevamente\n")
       
 def menu():
     #lista_nodos=ListaDoble()
