@@ -243,7 +243,7 @@ def grafica(terrenos):
         node[shape=circle fillcolor=cadetblue3 style =filled]
         
         subgraph cluster_p{\n"""
-            graphviz+='\t\tlabel="'+terreno.nombre+'"\n'
+            graphviz+='\t\tlabel="'+terreno.nombre+'\nDimensiones: '+terreno.dimensionx+'x'+terreno.dimensiony+'"\n'
             graphviz+="""\t\tbgcolor = brown3
             edge[dir = "none"]\n"""
             
